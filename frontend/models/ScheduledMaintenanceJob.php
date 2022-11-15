@@ -17,6 +17,8 @@ class ScheduledMaintanceJob extends backendScheduledMaintenanceJob
 {
   // Set Vat percentage as constant; Alternatively can be from a general .env settings file or database table
   const $VATPERCENTAGE = 21;
+  const $REALTIMEPARTPRICEURL = "https://api.realtimepartprices.com/v2/carparts/";
+  const $REALTIMEPARTPRICEKEY = "039ifedklj23#hd9";
 
   /**
    * rules for Scheduledmaintenancejob
@@ -162,7 +164,32 @@ class ScheduledMaintanceJob extends backendScheduledMaintenanceJob
           // if part(s) found, sum prices
           if ($parts) {
             foreach($parts as $part) {
-              $partCosts += $part->spp_cost;
+              try {
+                // Check real-time price of part via $part->part_rtcode as request id, easily via file_get_contents
+                // inside an own try .. catch to use own price if fails or not available
+                $realTimePriceData = file_get_contents($REALTIMEPARTPRICEURL, false,
+                  [
+                    'http' => [
+                      'method' => 'POST',
+                      'header' => 'Content-Type: application/x-www-form-urlencoded',
+                      'content' => http_build_query([
+                        'key' = $REALTIMEPARTPRICEKEY,
+                        'partid' = $part->part_rtcode  
+                      ])
+                    ]
+                  ]
+                );
+                // check if any data returned and if a 'priceexvat' as number is returned (asumed enough..)
+                if (!empty($realTimePriceData) && !empty($realTimePriceData->priceexvat) && is_numeric($realTimePriceData->priceexvat)) {
+                  $partCosts += $realTimePriceData->costprice;
+                } else {
+                  $partCosts += $part->spp_cost;
+                }
+              } catch (Exception $e) {
+                // skip error: no price available..                
+              }
+        
+
             }           
           }
         }
