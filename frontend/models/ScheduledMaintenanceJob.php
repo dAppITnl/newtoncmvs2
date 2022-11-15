@@ -5,7 +5,7 @@ namespace frontend\models;
 use common\models\Models;
 use common\base\Exception;
 use common\helpers\GeneralHelper;
-use backend\models\ScheduledMaintanceJob as backendScheduledMaintanceJob;
+use backend\models\ScheduledMaintenanceJob as backendScheduledMaintenanceJob;
 use backend\models\Car;
 use backend\models\SpareParts;
 
@@ -13,7 +13,7 @@ use backend\models\SpareParts;
  * ScheduledMaintanceJob class
  * The frontend additional functions to the ScheduledMaintanceJob backend class 
  */
-class ScheduledMaintanceJob extends backendScheduledMaintanceJob
+class ScheduledMaintanceJob extends backendScheduledMaintenanceJob
 {
   // Set Vat percentage as constant; Alternatively can be from a general .env settings file or database table
   const $VATPERCENTAGE = 21;

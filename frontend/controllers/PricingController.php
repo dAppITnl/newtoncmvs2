@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\controllers\Controller;
 use frontend\models\TotalpriceForm;
-use frontend\models\ScheduledMaintanceJob;
+use frontend\models\ScheduledMaintenanceJob;
 
 /**
  * Pricing Controller
@@ -32,7 +32,7 @@ class PricingController extends Controller
     $totalpriceResult = [];
     $totalpriceForm = new TotalpriceForm();
     if ($totalpriceForm->load($_POST) && $totalpriceForm->validate()) {
-      $totalpriceResult = ScheduledMaintanceJob::calcTotalCarServicePrice($totalpriceForm->carLicense, $totalpriceForm->$startDate);
+      $totalpriceResult = ScheduledMaintenanceJob::calcTotalCarServicePrice($totalpriceForm->carLicense, $totalpriceForm->$startDate);
     }
 
     return $this->render('totalpriceForm', [
